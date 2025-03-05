@@ -46,9 +46,9 @@ func main() {
 		
 	case "update":
 		updateTask(os.Args)
-	/*case "delete":
-		err := deleteTask(strconv.Atoi(os.Args[2]))
-	case "mark-in-progress":
+	case "delete":
+		deleteTask(os.Args, strconv.Atoi(os.Args[2]))
+	/*case "mark-in-progress":
 		err := updateProgress(strconv.Atoi(os.Args[2]), InProgress)
 	case "mark-done":
 		err := updateProgress(strconv.Atoi(os.Args[2]), Done)
@@ -135,8 +135,6 @@ func updateTask(args []string) {
 	task.Description = args[3]
 
 	tasks[id] = task
-
-	fmt.Println(tasks)
 
 	writeTasksToFile(tasks, TasksFile)
 	
