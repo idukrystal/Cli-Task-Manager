@@ -1,4 +1,10 @@
-package book
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+)
 
 // Generates a (map[id int]tasks Task) from fileName(json file)
 func readTasksFromFile(fileName string) map[int]Task {
