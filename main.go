@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 type Task struct {
@@ -21,14 +22,19 @@ const(
 	ToDo Status = "To Do"
 	InProgress Status = "In Progress"
 	Done Status = "Done"
+	Delete Status = "Delete"
+	None Status = "None"
 	NewDescNotProvided = "New description not provided."
 	NotEnoghArgs = "Not Enogh Args"
 	NotFound = "Not Found"
 	TasksFile = "TASKS.json"
+	TimeFormat = "Jan 02 2006, 03:04"
 	
 )
 
-
+var allowedStatus = map[string]Status{
+	"done": Done, "todo": ToDo, "inprogress": InProgress,
+}
 
 func main() {
 	command := os.Args[1]
@@ -43,23 +49,16 @@ func main() {
 	case "add":
 		id := addNewTask(os.Args)
 		fmt.Printf("Task added successfully (ID: %d)\n", id)
-		
 	case "update":
-		updateTask(os.Args)
-	/*case "delete":
-		err := deleteTask(strconv.Atoi(os.Args[2]))
+		updateTask(os.Args, None)
+	case "delete":
+		updateTask(os.Args, Delete)
 	case "mark-in-progress":
-		err := updateProgress(strconv.Atoi(os.Args[2]), InProgress)
+		updateTask(os.Args, InProgress)
 	case "mark-done":
-		err := updateProgress(strconv.Atoi(os.Args[2]), Done)
+		updateTask(os.Args, Done)
 	case "list":
-		err := listTasks(nil)
-	case "list done":
-		err := listTasks(Done)
-	case "list todo":
-		err := listTasks(ToDo)
-	case "list in-progress":
-		err := listTasks(InProgress)*/
+		listTasks(os.Args)
 	default:
 		fmt.Printf("Invalid Command: %s\n", command)
 		
@@ -103,6 +102,7 @@ func addNewTask(args []string) int {
 	tasks[newId] = Task {
 		Description: args[2],
 		Status: ToDo,
+		CreatedAt: time.Now().Format(TimeFormat),	
 	}
 
 	writeTasksToFile(tasks, TasksFile)
@@ -110,14 +110,19 @@ func addNewTask(args []string) int {
 	return newId
 }
 
-func updateTask(args []string) {
+func updateTask(args []string, status Status) {
 	count := len(args)
 
 	var id int
 	var err error
+	var expectedCount int = 3
+
+	if status != None{
+		expectedCount = 2
+	}
 	
-	if count > 3 {
-	id, err = strconv.Atoi(args[2])
+	if count > expectedCount {
+		id, err = strconv.Atoi(args[2])
 		if err != nil{
 			panic(fmt.Errorf("Not a valid ID: %s", args[2]))
 		}
@@ -132,14 +137,39 @@ func updateTask(args []string) {
 		panic(errors.New(NotFound))
 	}
 
-	task.Description = args[3]
-
-	tasks[id] = task
-
-	fmt.Println(tasks)
+	if status == Delete {
+		delete(tasks, id)
+	} else {
+		if status == None {
+			task.Description = args[3]
+		} else {
+			task.Status = status
+		}
+		task.UpdatedAt = time.Now().Format(TimeFormat)
+		tasks[id] = task
+	}
 
 	writeTasksToFile(tasks, TasksFile)
 	
+}
+
+func listTasks(args []string) {
+	var valid bool = true
+	var status Status
+	if len(args) < 3 {
+		status = None
+	} else {
+		status, valid = allowedStatus[args[2]]
+		if !valid {
+			panic(fmt.Errorf("Unkown status: %s",args[2]))
+		}
+	}
+	tasks := readTasksFromFile(TasksFile)
+	for id, task := range tasks {
+		if task.Status == status || status == None {
+			printTask(id, task)
+		}
+	}
 }
 
 func writeTasksToFile(tasks map[int]Task, tasksFile string) {
@@ -161,4 +191,14 @@ func getNextId(tasks map[int]Task) (highestId int) {
 	}
 	highestId++
 	return
+}
+
+func printTask(id int, task Task) {
+	indent := "    "
+	fmt.Printf("ID: %d, Description: %s\n", id, task.Description)
+	fmt.Printf("%sStatus: %s\n", indent, task.Status)
+	fmt.Printf("%sCreated: %s\n", indent, task.CreatedAt)
+	if task.UpdatedAt != "" {
+		fmt.Printf("%sLast Update: %s\n", indent, task.UpdatedAt)
+	}
 }
