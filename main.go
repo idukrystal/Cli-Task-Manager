@@ -37,8 +37,10 @@ var allowedStatus = map[string]Status{
 }
 
 func main() {
+	// add, delete, update etc.
 	command := os.Args[1]
 
+	// handles any pannic(err) calls due to an error
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("%s: %s\n",command, r)
@@ -60,10 +62,13 @@ func main() {
 	case "list":
 		listTasks(os.Args)
 	default:
+		// an unknown command was entered
 		fmt.Printf("Invalid Command: %s\n", command)
-		
 	}
 }
+
+/* function to handle commands */
+
 
 func readTasksFromFile(fileName string) map[int]Task {
 	if _, err := os.Stat(TasksFile); err != nil {
@@ -90,38 +95,52 @@ func readTasksFromFile(fileName string) map[int]Task {
 	return tasks
 }
 
+// handles add: creates a new task and returns it's unique id
 func addNewTask(args []string) int {
-
+	// if user did not provide all required arguments
 	if len(args) < 3 {
 		panic(errors.New(NewDescNotProvided))
 	}
 
 	tasks := readTasksFromFile(TasksFile)
+
+	// generates a new unique id
 	newId := getNextId(tasks)
 	
 	tasks[newId] = Task {
 		Description: args[2],
 		Status: ToDo,
+		// curent time
 		CreatedAt: time.Now().Format(TimeFormat),	
 	}
 
 	writeTasksToFile(tasks, TasksFile)
-
 	return newId
 }
 
+/*handles update, delete, mark-in-progress and mark-done based on the value passed as status
+ *args: should contain task id at index 2 and description at 3 (if applicable)
+ *Status
+ * ****None: updates a tasks description
+ * ****Delete: removes a task
+ * ****InProgress: changes a tasks status to In progress
+ * ****Done: changes a tasks status to Done
+ */
 func updateTask(args []string, status Status) {
 	count := len(args)
 
 	var id int
 	var err error
-	var expectedCount int = 3
 
+	// status = None, expects the description argument after index
+	var expectedCount int = 4
 	if status != None{
-		expectedCount = 2
+		expectedCount = 3
 	}
+
 	
-	if count > expectedCount {
+	if count > (expectedCount) {
+		// convert to int, raises error in err if args[2] is not a number
 		id, err = strconv.Atoi(args[2])
 		if err != nil{
 			panic(fmt.Errorf("Not a valid ID: %s", args[2]))
