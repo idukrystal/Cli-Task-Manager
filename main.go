@@ -67,35 +67,13 @@ func main() {
 	}
 }
 
+
 /* function to handle commands */
 
 
-func readTasksFromFile(fileName string) map[int]Task {
-	if _, err := os.Stat(TasksFile); err != nil {
-		if os.IsNotExist(err) {
-			fmt.Println("Creating New Task File")
-			if err = os.WriteFile(TasksFile, []byte("{}"),0600); err != nil {
-				panic(err)
-			}
-		} else {
-			panic(err)
-		}
-	}
-	
-	data, err := os.ReadFile(TasksFile)
-	if err != nil {
-		panic(err)
-	}
-	
-	var tasks map[int] Task
-	if err := json.Unmarshal(data, &tasks); err != nil{
-		panic(err)
-	}
-
-	return tasks
-}
-
-// handles add: creates a new task and returns it's unique id
+/* handles add: creates a new task and returns it's unique id
+ * args: description of new task at index 2
+ */
 func addNewTask(args []string) int {
 	// if user did not provide all required arguments
 	if len(args) < 3 {
@@ -113,7 +91,7 @@ func addNewTask(args []string) int {
 		// curent time
 		CreatedAt: time.Now().Format(TimeFormat),	
 	}
-
+	
 	writeTasksToFile(tasks, TasksFile)
 	return newId
 }
@@ -139,7 +117,7 @@ func updateTask(args []string, status Status) {
 	}
 
 	
-	if count > (expectedCount) {
+	if count >= expectedCount {
 		// convert to int, raises error in err if args[2] is not a number
 		id, err = strconv.Atoi(args[2])
 		if err != nil{
@@ -151,6 +129,7 @@ func updateTask(args []string, status Status) {
 
 	tasks := readTasksFromFile(TasksFile)
 
+	// present is false if id not in tasks
 	task, present := tasks[id]
 	if !present {
 		panic(errors.New(NotFound))
@@ -164,25 +143,31 @@ func updateTask(args []string, status Status) {
 		} else {
 			task.Status = status
 		}
+		// updated at set to current time
 		task.UpdatedAt = time.Now().Format(TimeFormat)
 		tasks[id] = task
 	}
 
 	writeTasksToFile(tasks, TasksFile)
-	
 }
 
+/* handles list: list saved tasks
+ * args: can contain status filters at index 2 (done, inprogress, done)
+ */
 func listTasks(args []string) {
 	var valid bool = true
 	var status Status
+	
 	if len(args) < 3 {
 		status = None
 	} else {
+		// valid is false if args[2] not in allowed status
 		status, valid = allowedStatus[args[2]]
 		if !valid {
 			panic(fmt.Errorf("Unkown status: %s",args[2]))
 		}
 	}
+	
 	tasks := readTasksFromFile(TasksFile)
 	for id, task := range tasks {
 		if task.Status == status || status == None {
@@ -191,7 +176,41 @@ func listTasks(args []string) {
 	}
 }
 
+// Generates a (map[id int]tasks Task) from fileName(json file)
+func readTasksFromFile(fileName string) map[int]Task {
+
+	// check if json file exists, creates it if it doesnt
+	if _, err := os.Stat(TasksFile); err != nil {
+		if os.IsNotExist(err) {
+			fmt.Println("Creating New Task File")
+
+			// creates a newFile with permision 0600: only user can read and write
+			if err = os.WriteFile(TasksFile, []byte("{}"),0600); err != nil {
+				panic(err)
+			}
+		} else {
+			panic(err)
+		}
+	}
+
+	// reads all data in [FileName]
+	data, err := os.ReadFile(TasksFile)
+	if err != nil {
+		panic(err)
+	}
+
+	// converts read data to a map of id(int): task
+	var tasks map[int] Task
+	if err := json.Unmarshal(data, &tasks); err != nil{
+		panic(err)
+	}
+
+	return tasks
+}
+
+// writes tasks to a json file(FileName)
 func writeTasksToFile(tasks map[int]Task, tasksFile string) {
+	// convert tasks to json
 	data, err := json.Marshal(tasks)
 	if err != nil {
 		panic(err)
@@ -202,6 +221,7 @@ func writeTasksToFile(tasks map[int]Task, tasksFile string) {
 	}
 }
 
+// generates new unique ids for tasks
 func getNextId(tasks map[int]Task) (highestId int) {
 	for id := range tasks {
 		if id  > highestId {
@@ -212,12 +232,16 @@ func getNextId(tasks map[int]Task) (highestId int) {
 	return
 }
 
+// Prints each of task's field on a newline
 func printTask(id int, task Task) {
 	indent := "    "
 	fmt.Printf("ID: %d, Description: %s\n", id, task.Description)
 	fmt.Printf("%sStatus: %s\n", indent, task.Status)
 	fmt.Printf("%sCreated: %s\n", indent, task.CreatedAt)
+
+	// only print updatedAt if task as been updated before
 	if task.UpdatedAt != "" {
 		fmt.Printf("%sLast Update: %s\n", indent, task.UpdatedAt)
 	}
 }
+
