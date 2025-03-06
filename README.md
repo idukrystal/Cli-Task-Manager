@@ -19,19 +19,19 @@ CLI Task Manager is a simple command-line application built in Go to help you ma
 
 1. Clone the repository:
    ```bash
-      git clone https://github.com/your-username/cli-task-manager.git
+   git clone https://github.com/idukrystal/Cli-Task-Manager.git
    ```
 2. Navigate to the project directory:
    ```bash
-      cd cli-task-manager
+   cd Cli-Task-Manager
    ```
 3. Build the project:
    ```bash
-      go build -o taskmanager
+   go build -o tasks
    ```
 4. Run the application:
    ```bash
-      ./taskmanager [command]
+   ./tasks [command] [args...]
    ```
 
 ## Usage
@@ -40,47 +40,47 @@ The CLI Task Manager supports the following commands:
 
 ### Add a Task
 ```bash
-./taskmanager add "Task description"
+./tasks add "Task description"
 ```
 
 ### Update a Task
 ```bash
-./taskmanager update [task-id] "New task description"
+./tasks update [task-id] "New task description"
 ```
 
 ### Delete a Task
 ```bash
-./taskmanager delete [task-id]
+./tasks delete [task-id]
 ```
 
 ### Mark a Task as In Progress
 ```bash
-./taskmanager progress [task-id]
+./tasks mark-in-progress [task-id]
 ```
 
 ### Mark a Task as Done
 ```bash
-./taskmanager done [task-id]
+./tasks mark-done [task-id]
 ```
 
 ### List All Tasks
 ```bash
-./taskmanager list
+./tasks list
 ```
 
 ### List Done Tasks
 ```bash
-./taskmanager list --done
+./tasks list done
 ```
 
 ### List In Progress Tasks
 ```bash
-./taskmanager list --progress
+./tasks list in-progress
 ```
 
 ### List Not Done Tasks
 ```bash
-./taskmanager list --not-done
+./tasks list todo
 ```
 
 ## Contributing
