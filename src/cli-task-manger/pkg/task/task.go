@@ -1,21 +1,40 @@
-package main
+package task
 
 import (
+	"tasks/pkg/status"
 	"encoding/json"
 	"fmt"
 	"os"
 )
 
+type Task struct {
+	Description string
+	Status status.Status
+	CreatedAt string
+	UpdatedAt string
+}
+
+func GetAllowedStatus(s string) (status.Status, bool) {
+	allowedStauses := map[string]status.Status{
+		"done": status.Done,
+		"todo": status.ToDo,
+		"inprogress": status.InProgress,
+	}
+
+	allowedStatus, allowed := allowedStauses[s]
+	return allowedStatus, allowed
+}
+
 // Generates a (map[id int]tasks Task) from fileName(json file)
-func readTasksFromFile(fileName string) map[int]Task {
+func ReadTasksFromFile(fileName string) map[int]Task {
 
 	// check if json file exists, creates it if it doesnt
-	if _, err := os.Stat(TasksFile); err != nil {
+	if _, err := os.Stat(fileName); err != nil {
 		if os.IsNotExist(err) {
 			fmt.Println("Creating New Task File")
 
 			// creates a newFile with permision 0600: only user can read and write
-			if err = os.WriteFile(TasksFile, []byte("{}"),0600); err != nil {
+			if err = os.WriteFile(fileName, []byte("{}"),0600); err != nil {
 				panic(err)
 			}
 		} else {
@@ -24,7 +43,7 @@ func readTasksFromFile(fileName string) map[int]Task {
 	}
 
 	// reads all data in [FileName]
-	data, err := os.ReadFile(TasksFile)
+	data, err := os.ReadFile(fileName)
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +58,7 @@ func readTasksFromFile(fileName string) map[int]Task {
 }
 
 // writes tasks to a json file(FileName)
-func writeTasksToFile(tasks map[int]Task, tasksFile string) {
+func WriteTasksToFile(tasks map[int]Task, tasksFile string) {
 	// convert tasks to json
 	data, err := json.Marshal(tasks)
 	if err != nil {
@@ -49,15 +68,4 @@ func writeTasksToFile(tasks map[int]Task, tasksFile string) {
 	if err = os.WriteFile(tasksFile, data, 0466); err != nil {
 		panic(err)
 	}
-}
-
-// generates new unique ids for tasks
-func getNextId(tasks map[int]Task) (highestId int) {
-	for id := range tasks {
-		if id  > highestId {
-			highestId = id
-		}
-	}
-	highestId++
-	return
 }
