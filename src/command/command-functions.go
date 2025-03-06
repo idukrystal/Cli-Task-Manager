@@ -1,3 +1,5 @@
+// Functions to handle command calls add, delete etc
+
 package command
 
 import (
@@ -14,6 +16,7 @@ const(
 	NotEnoghArgs = "Not Enogh Args"
 	NotFound = "Not Found"
 	TasksFile = "TASKS.json"
+	// all date/time printed in this format
 	TimeFormat = "Jan 02 2006, 03:04"
 )
 

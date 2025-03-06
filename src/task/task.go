@@ -1,3 +1,5 @@
+// Main package for the Task data type and function to parse tasks into a json file
+
 package task
 
 import (
@@ -7,6 +9,7 @@ import (
 	"os"
 )
 
+// Represents a single task object
 type Task struct {
 	Description string
 	Status status.Status
@@ -14,6 +17,7 @@ type Task struct {
 	UpdatedAt string
 }
 
+// converts a string s into equivalent Status and return true or returns false none of tge allowed Status is equivakent
 func GetAllowedStatus(s string) (status.Status, bool) {
 	allowedStauses := map[string]status.Status{
 		"done": status.Done,
@@ -21,6 +25,7 @@ func GetAllowedStatus(s string) (status.Status, bool) {
 		"inprogress": status.InProgress,
 	}
 
+	// alliwed is false if s not in allowesStatuses
 	allowedStatus, allowed := allowedStauses[s]
 	return allowedStatus, allowed
 }
