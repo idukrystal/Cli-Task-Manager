@@ -1,8 +1,8 @@
 package command
 
 import (
-	"tasks/pkg/status"
-	"tasks/pkg/task"
+	"tasks/src/status"
+	"tasks/src/task"
 	"errors"
 	"fmt"
 	"strconv"

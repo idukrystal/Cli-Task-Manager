@@ -1,7 +1,7 @@
 package task
 
 import (
-	"tasks/pkg/status"
+	"tasks/src/status"
 	"encoding/json"
 	"fmt"
 	"os"

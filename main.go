@@ -1,8 +1,8 @@
 package main
 
 import (
-	"tasks/pkg/command"
-	"tasks/pkg/status"
+	"tasks/src/command"
+	"tasks/src/status"
 	"errors"
 	"fmt"
 	"os"
