@@ -1,4 +1,4 @@
-// Varriable and data types to represent a  tasks possible state
+// Varriable and data types to represent a  github.com/idukrystal/Cli-Task-Manager possible state
 package status
 
 // Represents the status of a Task

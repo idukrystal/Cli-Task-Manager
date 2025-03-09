@@ -3,8 +3,8 @@
 package command
 
 import (
-	"tasks/src/status"
-	"tasks/src/task"
+	"github.com/idukrystal/Cli-Task-Manager/src/status"
+	"github.com/idukrystal/Cli-Task-Manager/src/task"
 	"errors"
 	"fmt"
 	"strconv"
@@ -50,10 +50,10 @@ func AddNewTask(args []string) int {
 /*handles update, delete, mark-in-progress and mark-done based on the value passed as status
  *args: should contain task id at index 2 and description at 3 (if applicable)
  *updateStatus
- * ****None: updates a tasks description
+ * ****None: updates a github.com/idukrystal/Cli-Task-Manager description
  * ****Delete: removes a task
- * ****InProgress: changes a tasks status to In progress
- * ****Done: changes a tasks status to Done
+ * ****InProgress: changes a github.com/idukrystal/Cli-Task-Manager status to In progress
+ * ****Done: changes a github.com/idukrystal/Cli-Task-Manager status to Done
  */
 func UpdateTask(args []string, updateStatus status.Status) {
 	count := len(args)
@@ -80,7 +80,7 @@ func UpdateTask(args []string, updateStatus status.Status) {
 
 	tasks := task.ReadTasksFromFile(TasksFile)
 
-	// present is false if id not in tasks
+	// present is false if id not in github.com/idukrystal/Cli-Task-Manager
 	currentTask, present := tasks[id]
 	if !present {
 		panic(errors.New(NotFound))
@@ -102,7 +102,7 @@ func UpdateTask(args []string, updateStatus status.Status) {
 	task.WriteTasksToFile(tasks, TasksFile)
 }
 
-/* handles list: list saved tasks
+/* handles list: list saved github.com/idukrystal/Cli-Task-Manager
  * args: can contain status filters at index 2 (done, inprogress, done)
  */
 func ListTasks(args []string) {
@@ -141,7 +141,7 @@ func printTask(id int, task task.Task) {
 	}
 }
 
-// generates new unique ids for tasks
+// generates new unique ids for github.com/idukrystal/Cli-Task-Manager
 func getNextId(tasks map[int]task.Task) (highestId int) {
 	for id := range tasks {
 		if id  > highestId {

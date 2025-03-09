@@ -3,8 +3,8 @@
 package main
 
 import (
-	"tasks/src/command"
-	"tasks/src/status"
+	"github.com/idukrystal/Cli-Task-Manager/src/command"
+	"github.com/idukrystal/Cli-Task-Manager/src/status"
 	"errors"
 	"fmt"
 	"os"

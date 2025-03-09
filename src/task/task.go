@@ -1,9 +1,9 @@
-// Main package for the Task data type and function to parse tasks into a json file
+// Main package for the Task data type and function to parse github.com/idukrystal/Cli-Task-Manager into a json file
 
 package task
 
 import (
-	"tasks/src/status"
+	"github.com/idukrystal/Cli-Task-Manager/src/status"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -30,7 +30,7 @@ func GetAllowedStatus(s string) (status.Status, bool) {
 	return allowedStatus, allowed
 }
 
-// Generates a (map[id int]tasks Task) from fileName(json file)
+// Generates a (map[id int]github.com/idukrystal/Cli-Task-Manager Task) from fileName(json file)
 func ReadTasksFromFile(fileName string) map[int]Task {
 
 	// check if json file exists, creates it if it doesnt
@@ -55,16 +55,16 @@ func ReadTasksFromFile(fileName string) map[int]Task {
 
 	// converts read data to a map of id(int): task
 	var tasks map[int] Task
-	if err := json.Unmarshal(data, &tasks); err != nil{
+	if err := json.Unmarshal(data, tasks); err != nil{
 		panic(err)
 	}
 
 	return tasks
 }
 
-// writes tasks to a json file(FileName)
-func WriteTasksToFile(tasks map[int]Task, tasksFile string) {
-	// convert tasks to json
+// writes github.com/idukrystal/Cli-Task-Manager to a json file(FileName)
+func WriteTasksToFile(tasks  map[int]Task, tasksFile string) {
+	// convert github.com/idukrystal/Cli-Task-Manager to json
 	data, err := json.Marshal(tasks)
 	if err != nil {
 		panic(err)
