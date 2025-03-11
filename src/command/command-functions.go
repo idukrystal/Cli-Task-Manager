@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"time"
+    "time"
 )
 
 const(
@@ -36,12 +36,7 @@ func AddNewTask(args []string) int {
 	// generates a new unique id
 	newId := getNextId(tasks)
 	
-	tasks[newId] = task.Task {
-		Description: args[2],
-		Status: status.ToDo,
-		// curent time
-		CreatedAt: time.Now().Format(TimeFormat),	
-	}
+	tasks[newId] = task.New(newId, args[2])
 	
 	task.WriteTasksToFile(tasks, TasksFile)
 	return newId
